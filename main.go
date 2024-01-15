@@ -57,7 +57,7 @@ func getsysteminfo() (int, int, int, float64, float64, float64, int) {
 	loadavg1 := float64(sysinfo.Loads[0]) / 65536
 	loadavg5 := float64(sysinfo.Loads[1]) / 65536
 	loadavg15 := float64(sysinfo.Loads[2]) / 65536
-	return int(uptime), int(totalram), int(totalswap), loadavg1, loadavg5, loadavg15, numprocs
+	return int(uptime), int(totalram), int(totalswap), loadavg1, loadavg5, loadavg15, int(numprocs)
 
 }
 
