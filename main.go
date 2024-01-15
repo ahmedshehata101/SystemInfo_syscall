@@ -40,14 +40,16 @@ func getdiskstats() (int, int, int) {
 	return int(total), int(free), int(used)
 }
 
-func getsysteminfo() (int, int, int, float64, float64, float64) {
+func getsysteminfo() (int, int, int, float64, float64, float64, int) {
 	sysinfo := sc.Sysinfo_t{}
 
 	var uptime uint64
 	var totalram uint64
 	var totalswap uint64
-	sc.Sysinfo(&sysinfo)
+	var numprocs uint64
 
+	sc.Sysinfo(&sysinfo)
+	numprocs = uint64(sysinfo.Procs)
 	uptime = uint64(sysinfo.Uptime) / 60
 
 	totalswap = sysinfo.Totalswap
@@ -55,7 +57,7 @@ func getsysteminfo() (int, int, int, float64, float64, float64) {
 	loadavg1 := float64(sysinfo.Loads[0]) / 65536
 	loadavg5 := float64(sysinfo.Loads[1]) / 65536
 	loadavg15 := float64(sysinfo.Loads[2]) / 65536
-	return int(uptime), int(totalram), int(totalswap), loadavg1, loadavg5, loadavg15
+	return int(uptime), int(totalram), int(totalswap), loadavg1, loadavg5, loadavg15, numprocs
 
 }
 
@@ -63,7 +65,7 @@ func main() {
 	var numofprocess int
 	totaldisk, freedisk, useddisk := getdiskstats()
 	_, numofprocess = getprocesslist()
-	uptime, totalram, totalswap, loadavg1, loadavg5, loadavg15 := getsysteminfo()
+	uptime, totalram, totalswap, loadavg1, loadavg5, loadavg15, numprocs_syscall := getsysteminfo()
 	fmt.Println("Details will be as follow:")
 	fmt.Println("==========================")
 	fmt.Println("Disk Space ", totaldisk, "GB")
@@ -71,6 +73,7 @@ func main() {
 	fmt.Println("Free Disk Space", freedisk, "GB")
 	fmt.Println("Uptime", uptime, "min")
 	fmt.Println("Number of Processses", numofprocess-1)
+	fmt.Println("Number of Processes by Syscall", numprocs_syscall)
 	fmt.Println("Total Swap Memory", totalswap, "MB")
 	fmt.Println("Total Memory", totalram, "MB")
 	fmt.Printf("Load AVg for 1 min :%.2f\n", loadavg1)
@@ -79,3 +82,4 @@ func main() {
 	fmt.Println("--------------------------------------------------")
 
 }
+
